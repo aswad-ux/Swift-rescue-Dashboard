@@ -9,8 +9,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'admin@swiftrescue.co.za');
+  final _passwordController = TextEditingController(text: 'admin');
   bool _isLoading = false;
 
   Future<void> _signIn() async {
