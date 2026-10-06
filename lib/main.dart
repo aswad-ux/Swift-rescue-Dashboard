@@ -32,7 +32,11 @@ final themeProvider = Provider((ref) {
       secondary: Color(0xFFFF8C00),
       surface: Color(0xFF1E1E1E),
     ),
-    textTheme: GoogleFonts.interTextTheme().apply(bodyColor: Colors.white, displayColor: Colors.white),
+    textTheme: ThemeData.dark().textTheme.apply(
+      fontFamily: GoogleFonts.inter().fontFamily,
+      bodyColor: Colors.white,
+      displayColor: Colors.white,
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),
       elevation: 0,
