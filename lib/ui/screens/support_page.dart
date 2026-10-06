@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:swift_rescue_admin/ui/widgets/glass_card.dart';
 
 class SupportPage extends StatefulWidget {
   const SupportPage({super.key});
@@ -55,25 +56,23 @@ class _SupportPageState extends State<SupportPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Support CRM', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+          const Text('Support CRM', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
           const SizedBox(height: 24),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator(color: Color(0xFFFF8C00)))
                 : Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // MASTER VIEW (Left Pane)
                       Expanded(
                         flex: 1,
-                        child: Card(
-                          elevation: 4,
-                          color: const Color(0xFF1E1E1E),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: GlassCard(
+                          padding: 0,
                           child: ListView.separated(
                             itemCount: _tickets.length,
                             separatorBuilder: (context, index) => const Divider(height: 1, color: Colors.black26),
@@ -118,17 +117,13 @@ class _SupportPageState extends State<SupportPage> {
                         flex: 2,
                         child: _selectedTicket == null
                             ? const Center(child: Text('Select a ticket to view details', style: TextStyle(color: Colors.grey)))
-                            : Card(
-                                elevation: 4,
-                                color: const Color(0xFF1E1E1E),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(32.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            : GlassCard(
+                                padding: 32.0,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Ticket #${_selectedTicket!['id'].toString().substring(0, 8)}', style: const TextStyle(color: Colors.grey)),
                                           Text(_selectedTicket!['created_at'].toString().split('T').first, style: const TextStyle(color: Colors.grey)),
@@ -190,7 +185,6 @@ class _SupportPageState extends State<SupportPage> {
                                       )
                                     ],
                                   ),
-                                ),
                               ),
                       ),
                     ],

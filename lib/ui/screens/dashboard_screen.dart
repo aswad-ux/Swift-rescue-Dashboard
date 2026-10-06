@@ -15,6 +15,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
+  bool _isExpanded = true;
 
   final List<Widget> _pages = [
     const OverviewPage(),
@@ -28,6 +29,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => setState(() => _isExpanded = !_isExpanded),
+        ),
         title: const Text('Swift Rescue Admin', style: TextStyle(color: Color(0xFFFF8C00), fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
@@ -36,49 +41,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
           )
         ],
       ),
-      body: Row(
-        children: [
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            labelType: NavigationRailLabelType.all,
-            backgroundColor: const Color(0xFF1E1E1E),
-            indicatorColor: const Color(0xFFFF8C00).withOpacity(0.2),
-            selectedIconTheme: const IconThemeData(color: Color(0xFFFF8C00)),
-            selectedLabelTextStyle: const TextStyle(color: Color(0xFFFF8C00), fontWeight: FontWeight.bold),
-            unselectedLabelTextStyle: const TextStyle(color: Colors.grey),
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.dashboard),
-                label: Text('Overview'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.support_agent),
-                label: Text('Support CRM'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.people),
-                label: Text('Users'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.store),
-                label: Text('Shops'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.local_shipping),
-                label: Text('Drivers'),
-              ),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF121212), Color(0xFF1A1A1A)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: _pages[_selectedIndex],
-          ),
-        ],
+        ),
+        child: Row(
+          children: [
+            NavigationRail(
+              extended: _isExpanded,
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (int index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              backgroundColor: Colors.transparent,
+              indicatorColor: const Color(0xFFFF8C00).withOpacity(0.2),
+              selectedIconTheme: const IconThemeData(color: Color(0xFFFF8C00)),
+              selectedLabelTextStyle: const TextStyle(color: Color(0xFFFF8C00), fontWeight: FontWeight.bold),
+              unselectedLabelTextStyle: const TextStyle(color: Colors.grey),
+              destinations: const [
+                NavigationRailDestination(icon: Icon(Icons.dashboard), label: Text('Overview')),
+                NavigationRailDestination(icon: Icon(Icons.support_agent), label: Text('Support CRM')),
+                NavigationRailDestination(icon: Icon(Icons.people), label: Text('Motorists')),
+                NavigationRailDestination(icon: Icon(Icons.store), label: Text('Repair Shops')),
+                NavigationRailDestination(icon: Icon(Icons.local_shipping), label: Text('Providers')),
+              ],
+            ),
+            const VerticalDivider(thickness: 1, width: 1, color: Colors.white10),
+            Expanded(child: _pages[_selectedIndex]),
+          ],
+        ),
       ),
     );
   }
