@@ -7,12 +7,12 @@ class ShopsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('All Repair Shops', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
+          const Text('Repair Shops', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 24),
           Expanded(
             child: FutureBuilder(
               future: Supabase.instance.client.from('profiles').select().eq('role', 'repair_shop'),
@@ -27,19 +27,39 @@ class ShopsPage extends StatelessWidget {
                 final shops = snapshot.data as List<dynamic>? ?? [];
                 
                 return Card(
+                  elevation: 4,
                   color: const Color(0xFF1E1E1E),
-                  child: ListView.separated(
-                    itemCount: shops.length,
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemBuilder: (context, index) {
-                      final shop = shops[index];
-                      return ListTile(
-                        leading: const CircleAvatar(backgroundColor: Colors.blue, child: Icon(Icons.store, color: Colors.white)),
-                        title: Text(shop['full_name'] ?? 'Unknown Shop'),
-                        subtitle: Text(shop['company_name'] ?? shop['phone'] ?? 'No details'),
-                        trailing: const Icon(Icons.chevron_right),
-                      );
-                    },
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        headingRowColor: WidgetStateProperty.all(const Color(0xFF2C2C2C)),
+                        columns: const [
+                          DataColumn(label: Text('Shop Name', style: TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Company', style: TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Contact Phone', style: TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Joined Date', style: TextStyle(fontWeight: FontWeight.bold))),
+                        ],
+                        rows: shops.map((shop) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Row(
+                                children: [
+                                  const CircleAvatar(radius: 16, backgroundColor: Colors.purple, child: Icon(Icons.store, size: 16, color: Colors.white)),
+                                  const SizedBox(width: 12),
+                                  Text(shop['full_name'] ?? 'Unknown Shop'),
+                                ],
+                              )),
+                              DataCell(Text(shop['company_name'] ?? 'N/A')),
+                              DataCell(Text(shop['phone'] ?? 'No phone')),
+                              DataCell(Text(shop['created_at']?.toString().split('T').first ?? '')),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
                 );
               },

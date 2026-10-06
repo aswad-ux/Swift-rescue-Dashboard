@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:swift_rescue_admin/ui/screens/overview_page.dart';
 import 'package:swift_rescue_admin/ui/screens/users_page.dart';
 import 'package:swift_rescue_admin/ui/screens/shops_page.dart';
 import 'package:swift_rescue_admin/ui/screens/drivers_page.dart';
@@ -16,6 +17,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
+    const OverviewPage(),
     const SupportPage(),
     const UsersPage(),
     const ShopsPage(),
@@ -50,6 +52,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             selectedLabelTextStyle: const TextStyle(color: Color(0xFFFF8C00), fontWeight: FontWeight.bold),
             unselectedLabelTextStyle: const TextStyle(color: Colors.grey),
             destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.dashboard),
+                label: Text('Overview'),
+              ),
               NavigationRailDestination(
                 icon: Icon(Icons.support_agent),
                 label: Text('Support CRM'),
