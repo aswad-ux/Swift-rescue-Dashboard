@@ -65,11 +65,11 @@ class _SupportPageState extends State<SupportPage> {
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator(color: Color(0xFFFF8C00)))
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // MASTER VIEW (Left Pane)
-                      Expanded(
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isMobile = constraints.maxWidth < 800;
+                      
+                      final listPane = Expanded(
                         flex: 1,
                         child: GlassCard(
                           padding: 0,
@@ -110,7 +110,8 @@ class _SupportPageState extends State<SupportPage> {
                             },
                           ),
                         ),
-                      ),
+                      );
+
                       final detailPane = Expanded(
                         flex: isMobile ? 1 : 2,
                         child: _selectedTicket == null
