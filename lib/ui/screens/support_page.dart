@@ -24,7 +24,7 @@ class _SupportPageState extends State<SupportPage> {
     try {
       final response = await Supabase.instance.client
           .from('support_tickets')
-          .select('*, profiles!support_tickets_user_id_fkey(full_name, email)')
+          .select('*, profiles!support_tickets_user_id_fkey(full_name)')
           .order('created_at', ascending: false);
       setState(() {
         _tickets = response as List<dynamic>;
