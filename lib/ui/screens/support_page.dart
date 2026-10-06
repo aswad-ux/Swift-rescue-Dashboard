@@ -111,10 +111,8 @@ class _SupportPageState extends State<SupportPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 24),
-                      // DETAIL VIEW (Right Pane)
-                      Expanded(
-                        flex: 2,
+                      final detailPane = Expanded(
+                        flex: isMobile ? 1 : 2,
                         child: _selectedTicket == null
                             ? const Center(child: Text('Select a ticket to view details', style: TextStyle(color: Colors.grey)))
                             : GlassCard(
@@ -125,7 +123,18 @@ class _SupportPageState extends State<SupportPage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Ticket #${_selectedTicket!['id'].toString().substring(0, 8)}', style: const TextStyle(color: Colors.grey)),
+                                          Row(
+                                            children: [
+                                              if (isMobile) ...[
+                                                IconButton(
+                                                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                                                  onPressed: () => setState(() => _selectedTicket = null),
+                                                ),
+                                                const SizedBox(width: 8),
+                                              ],
+                                              Text('Ticket #${_selectedTicket!['id'].toString().substring(0, 8)}', style: const TextStyle(color: Colors.grey)),
+                                            ],
+                                          ),
                                           Text(_selectedTicket!['created_at'].toString().split('T').first, style: const TextStyle(color: Colors.grey)),
                                         ],
                                       ),
@@ -186,8 +195,24 @@ class _SupportPageState extends State<SupportPage> {
                                     ],
                                   ),
                               ),
-                      ),
-                    ],
+                      );
+                      
+                      if (isMobile) {
+                        return Row(
+                          children: [
+                            if (_selectedTicket == null) listPane else detailPane,
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          listPane,
+                          const SizedBox(width: 24),
+                          detailPane,
+                        ],
+                      );
+                    },
                   ),
           ),
         ],

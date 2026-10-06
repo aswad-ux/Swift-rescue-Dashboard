@@ -47,9 +47,14 @@ class _ShopsPageState extends State<ShopsPage> {
           GlassCard(
             child: Column(
               children: [
-                Row(
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: 300,
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Search by name or company...',
@@ -61,7 +66,6 @@ class _ShopsPageState extends State<ShopsPage> {
                         onChanged: (val) => setState(() => _searchQuery = val),
                       ),
                     ),
-                    const SizedBox(width: 16),
                     ElevatedButton.icon(
                       onPressed: () async {
                         final result = await showDialog(
@@ -92,18 +96,24 @@ class _ShopsPageState extends State<ShopsPage> {
                 else
                   SizedBox(
                     width: double.infinity,
-                    child: PaginatedDataTable(
-                      arrowHeadColor: Colors.white,
-                      headingRowColor: WidgetStateProperty.all(Colors.white.withOpacity(0.05)),
-                      columns: const [
-                        DataColumn(label: Text('Shop Name', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
-                        DataColumn(label: Text('Company', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
-                        DataColumn(label: Text('Phone', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
-                        DataColumn(label: Text('Joined Date', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
-                        DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
-                      ],
-                      source: _ShopData(filteredShops, context),
-                      rowsPerPage: 8,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 128),
+                        child: PaginatedDataTable(
+                          arrowHeadColor: Colors.white,
+                          headingRowColor: WidgetStateProperty.all(Colors.white.withOpacity(0.05)),
+                          columns: const [
+                            DataColumn(label: Text('Shop Name', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
+                            DataColumn(label: Text('Company', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
+                            DataColumn(label: Text('Phone', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
+                            DataColumn(label: Text('Joined Date', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
+                            DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
+                          ],
+                          source: _ShopData(filteredShops, context),
+                          rowsPerPage: 8,
+                        ),
+                      ),
                     ),
                   ),
               ],

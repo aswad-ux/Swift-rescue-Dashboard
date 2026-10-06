@@ -24,45 +24,51 @@ class OverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Dashboard Overview', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
-          const SizedBox(height: 32),
-          FutureBuilder<Map<String, dynamic>>(
-            future: _fetchMetrics(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator(color: Color(0xFFFF8C00)));
-              }
-              final metrics = snapshot.data ?? {'motorists': 0, 'drivers': 0, 'shops': 0, 'openTickets': 0};
+    final width = MediaQuery.of(context).size.width;
+    int axisCount = width < 600 ? 1 : width < 1000 ? 2 : 4;
+    double aspectRatio = width < 600 ? 2.5 : 1.8;
 
-              return Column(
-                children: [
-                  GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 24,
-                    mainAxisSpacing: 24,
-                    childAspectRatio: 1.8,
-                    children: [
-                      _MetricGlassCard(title: 'Total Motorists', count: metrics['motorists']!, icon: Icons.people, color: Colors.blue),
-                      _MetricGlassCard(title: 'Active Drivers', count: metrics['drivers']!, icon: Icons.local_shipping, color: Colors.green),
-                      _MetricGlassCard(title: 'Repair Shops', count: metrics['shops']!, icon: Icons.store, color: Colors.purple),
-                      _MetricGlassCard(title: 'Open Tickets', count: metrics['openTickets']!, icon: Icons.support_agent, color: Colors.redAccent),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  GlassCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Dashboard Overview', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white)),
+            const SizedBox(height: 32),
+            FutureBuilder<Map<String, dynamic>>(
+              future: _fetchMetrics(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator(color: Color(0xFFFF8C00)));
+                }
+                final metrics = snapshot.data ?? {'motorists': 0, 'drivers': 0, 'shops': 0, 'openTickets': 0};
+
+                return Column(
+                  children: [
+                    GridView.count(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      crossAxisCount: axisCount,
+                      crossAxisSpacing: 24,
+                      mainAxisSpacing: 24,
+                      childAspectRatio: aspectRatio,
                       children: [
-                        const Text('User Growth (Last 7 Days)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          height: 300,
+                        _MetricGlassCard(title: 'Total Motorists', count: metrics['motorists']!, icon: Icons.people, color: Colors.blue),
+                        _MetricGlassCard(title: 'Active Drivers', count: metrics['drivers']!, icon: Icons.local_shipping, color: Colors.green),
+                        _MetricGlassCard(title: 'Repair Shops', count: metrics['shops']!, icon: Icons.store, color: Colors.purple),
+                        _MetricGlassCard(title: 'Open Tickets', count: metrics['openTickets']!, icon: Icons.support_agent, color: Colors.redAccent),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    GlassCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('User Growth (Last 7 Days)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            height: 300,
                           child: LineChart(
                             LineChartData(
                               gridData: FlGridData(show: true, drawVerticalLine: false, getDrawingHorizontalLine: (value) => FlLine(color: Colors.white10, strokeWidth: 1)),
@@ -99,7 +105,7 @@ class OverviewPage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
