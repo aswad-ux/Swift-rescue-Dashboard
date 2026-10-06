@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:swift_rescue_admin/ui/widgets/glass_card.dart';
+import 'package:swift_rescue_admin/ui/widgets/add_user_dialog.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -46,15 +47,39 @@ class _UsersPageState extends State<UsersPage> {
           GlassCard(
             child: Column(
               children: [
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search by name or phone...',
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  ),
-                  onChanged: (val) => setState(() => _searchQuery = val),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Search by name or phone...',
+                          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.05),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                        ),
+                        onChanged: (val) => setState(() => _searchQuery = val),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final result = await showDialog(
+                          context: context,
+                          builder: (context) => const AddUserDialog(role: 'motorist'),
+                        );
+                        if (result == true) _fetchUsers();
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Motorist'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF8C00),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 if (_isLoading)
