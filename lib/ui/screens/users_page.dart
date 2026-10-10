@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:swift_rescue_admin/ui/widgets/glass_card.dart';
 import 'package:swift_rescue_admin/ui/widgets/add_user_dialog.dart';
+import 'package:swift_rescue_admin/ui/widgets/user_details_dialog.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -101,6 +102,7 @@ class _UsersPageState extends State<UsersPage> {
                       child: ConstrainedBox(
                         constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width - 128),
                         child: PaginatedDataTable(
+                          showCheckboxColumn: false,
                           arrowHeadColor: Colors.white,
                           headingRowColor: WidgetStateProperty.all(Colors.white.withOpacity(0.05)),
                           columns: const [
@@ -133,6 +135,12 @@ class _UserData extends DataTableSource {
   DataRow getRow(int index) {
     final user = data[index];
     return DataRow(
+      onSelectChanged: (_) {
+        showDialog(
+          context: context,
+          builder: (context) => UserDetailsDialog(user: user),
+        );
+      },
       cells: [
         DataCell(Row(
           children: [
@@ -147,10 +155,19 @@ class _UserData extends DataTableSource {
           PopupMenuButton(
             icon: const Icon(Icons.more_vert, color: Colors.grey),
             itemBuilder: (context) => [
+              const PopupMenuItem(value: 'view', child: Text('View Details')),
               const PopupMenuItem(value: 'edit', child: Text('Edit')),
               const PopupMenuItem(value: 'suspend', child: Text('Suspend')),
               const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Colors.red))),
             ],
+            onSelected: (value) {
+              if (value == 'view') {
+                showDialog(
+                  context: context,
+                  builder: (context) => UserDetailsDialog(user: user),
+                );
+              }
+            },
           ),
         ),
       ],

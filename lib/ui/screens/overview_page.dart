@@ -13,12 +13,40 @@ class OverviewPage extends StatelessWidget {
     final driversRes = await client.from('profiles').select('*').eq('role', 'provider').count(CountOption.exact);
     final shopsRes = await client.from('profiles').select('*').eq('role', 'repair_shop').count(CountOption.exact);
     final ticketsRes = await client.from('support_tickets').select('*').eq('status', 'Open').count(CountOption.exact);
+    final jobsRes = await client.from('jobs').select('service_type, lat, lng');
+
+    String topService = 'N/A';
+    String topLocation = 'N/A';
+    int maxCount = 0;
+
+    if (jobsRes.isNotEmpty) {
+      final counts = <String, int>{};
+      for (var job in jobsRes) {
+        final st = job['service_type'] as String? ?? 'Unknown';
+        counts[st] = (counts[st] ?? 0) + 1;
+      }
+      
+      for (var entry in counts.entries) {
+        if (entry.value > maxCount) {
+          maxCount = entry.value;
+          topService = entry.key;
+        }
+      }
+      
+      // Find a location associated with this top service (just take the first one or an average)
+      final topJobs = jobsRes.where((j) => j['service_type'] == topService).toList();
+      if (topJobs.isNotEmpty && topJobs.first['lat'] != null) {
+        topLocation = '\${topJobs.first['lat'].toStringAsFixed(3)}, \${topJobs.first['lng'].toStringAsFixed(3)}';
+      }
+    }
 
     return {
       'motorists': motoristsRes.count,
       'drivers': driversRes.count,
       'shops': shopsRes.count,
       'openTickets': ticketsRes.count,
+      'topService': topService,
+      'topLocation': topLocation,
     };
   }
 
@@ -54,11 +82,45 @@ class OverviewPage extends StatelessWidget {
                       mainAxisSpacing: 24,
                       childAspectRatio: aspectRatio,
                       children: [
-                        _MetricGlassCard(title: 'Total Motorists', count: metrics['motorists']!, icon: Icons.people, color: Colors.blue),
-                        _MetricGlassCard(title: 'Active Drivers', count: metrics['drivers']!, icon: Icons.local_shipping, color: Colors.green),
-                        _MetricGlassCard(title: 'Repair Shops', count: metrics['shops']!, icon: Icons.store, color: Colors.purple),
-                        _MetricGlassCard(title: 'Open Tickets', count: metrics['openTickets']!, icon: Icons.support_agent, color: Colors.redAccent),
+                        _MetricGlassCard(title: 'Total Motorists', count: metrics['motorists'].toString(), icon: Icons.people, color: Colors.blue),
+                        _MetricGlassCard(title: 'Active Drivers', count: metrics['drivers'].toString(), icon: Icons.local_shipping, color: Colors.green),
+                        _MetricGlassCard(title: 'Repair Shops', count: metrics['shops'].toString(), icon: Icons.store, color: Colors.purple),
+                        _MetricGlassCard(title: 'Open Tickets', count: metrics['openTickets'].toString(), icon: Icons.support_agent, color: Colors.redAccent),
                       ],
+                    ),
+                    const SizedBox(height: 32),
+                    // Most frequent service requested and location
+                    GlassCard(
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(color: const Color(0xFFFF8C00).withOpacity(0.2), shape: BoxShape.circle),
+                            child: const Icon(Icons.star, color: Color(0xFFFF8C00), size: 32),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Most Frequent Service Request', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                                const SizedBox(height: 8),
+                                Text(metrics['topService'] ?? 'N/A', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Hotspot Location', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                                const SizedBox(height: 8),
+                                Text(metrics['topLocation'] ?? 'N/A', style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 32),
                     GlassCard(
@@ -111,7 +173,7 @@ class OverviewPage extends StatelessWidget {
 
 class _MetricGlassCard extends StatelessWidget {
   final String title;
-  final int count;
+  final String count;
   final IconData icon;
   final Color color;
 
