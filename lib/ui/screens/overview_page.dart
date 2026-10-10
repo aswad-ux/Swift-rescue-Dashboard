@@ -36,7 +36,7 @@ class OverviewPage extends StatelessWidget {
       // Find a location associated with this top service (just take the first one or an average)
       final topJobs = jobsRes.where((j) => j['service_type'] == topService).toList();
       if (topJobs.isNotEmpty && topJobs.first['lat'] != null) {
-        topLocation = '\${topJobs.first['lat'].toStringAsFixed(3)}, \${topJobs.first['lng'].toStringAsFixed(3)}';
+        topLocation = "\${topJobs.first['lat'].toStringAsFixed(3)}, \${topJobs.first['lng'].toStringAsFixed(3)}";
       }
     }
 
