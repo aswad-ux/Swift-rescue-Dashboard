@@ -123,8 +123,8 @@ class _UserDetailsDialogState extends State<UserDetailsDialog> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('\${v['make'] ?? ''} \${v['model'] ?? ''} \${v['year'] ?? ''}'.trim(), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                                          Text('Color: \${v['color'] ?? 'Unknown'}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                                          Text("\${v['make'] ?? ''} \${v['model'] ?? ''} \${v['year'] ?? ''}".trim(), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                                          Text("Color: \${v['color'] ?? 'Unknown'}", style: const TextStyle(color: Colors.grey, fontSize: 12)),
                                         ],
                                       ),
                                     ),
